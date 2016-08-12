@@ -28,14 +28,25 @@ function handleError(res, reason, message, code) {
   });
 }
 
-function getValue(body, key) {
-  return (body.key) ? body.key : null;
+function getTower(tower) {
+  return {
+    mcc: tower.mcc,
+    mnc: tower.mnc,
+    lac: tower.lac,
+    cid: tower.cid,
+    latitude: tower.latitude,
+    longitude: tower.longitude,
+    asuLevel: tower.asuLevel,
+    signalLevel: tower.signalLevel,
+    signalDbm: tower.signalDbm
+  };
 }
 
 app.post('/record', function(req, res) {
   const body = req.body;
+  console.log(body);
   const record = new Record({
-    id: body.id,
+    id: body.id
   });
   if (body.latitude && body.longitude) {
     record.location = [{
@@ -71,19 +82,12 @@ app.post('/record', function(req, res) {
       isGsm: body.signalRecord.isGsm
     }
   }
+  if (body.connectedTower) {
+    record.connectedTower = getTower(body,connectedTower);
+  }
   if (body.cellularTowers) {
     record.cellularTowers = body.cellularTowers.map(function(tower) {
-        return {
-          mcc: tower.mcc,
-          mnc: tower.mnc,
-          lac: tower.lac,
-          cid: tower.cid,
-          latitude: tower.latitude,
-          longitude: tower.longitude,
-          asuLevel: tower.asuLevel,
-          signalLevel: tower.signalLevel,
-          signalDbm: tower.signalDbm
-        };
+      return getTower(tower);
     });
   }
   record.save(function(err) {

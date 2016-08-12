@@ -52,6 +52,7 @@ const Record = new mongoose.Schema({
   battery: Battery,
   signal: SignalRecord,
   location: [Location],
+  connectedTower: CellularTower,
   cellularTowers: [CellularTower]
 });
 
